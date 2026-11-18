@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LogiLens | Supply Chain & RTO Performance Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg-primary: #0b0f17;
+      --bg-card: #131926;
+      --bg-card-hover: #182030;
+      --border: #1f293d;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.12);
+      --success: #34d399;
+      --warning: #fbbf24;
+      --danger: #f87171;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      padding: 24px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    /* Header & Controls */
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .brand h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: var(--accent-soft);
+      color: var(--accent);
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+    }
+
+    .brand p {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      margin-top: 4px;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    select, button {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 9px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    select:hover, button:hover {
+      border-color: var(--accent);
+      background: var(--bg-card-hover);
+    }
+
+    button.reset-btn {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+    }
+
+    .kpi-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .kpi-value {
+      font-size: 1.85rem;
+      font-weight: 700;
+      margin: 8px 0 4px;
+      letter-spacing: -0.02em;
+    }
+
+    .kpi-delta {
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pos { color: var(--success); }
+    .neg { color: var(--danger); }
+    .warn { color: var(--warning); }
+
+    /* Charts Layout */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 16px;
+    }
+
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .panel-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 270px;
+      width: 100%;
+    }
+
+    /* Bottom Grid */
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1.8fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .bottom-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    th {
+      text-align: left;
+      color: var(--text-muted);
+      font-weight: 500;
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    td {
+      padding: 12px 8px;
+      border-bottom: 1px solid rgba(31, 41, 61, 0.6);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .status-pill {
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .pill-good { background: rgba(52, 211, 153, 0.14); color: var(--success); }
+    .pill-warn { background: rgba(251, 191, 36, 0.14); color: var(--warning); }
+    .pill-bad  { background: rgba(248, 113, 113, 0.14); color: var(--danger); }
+
+    footer {
+      margin-top: 28px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <h1>LogiLens <span class="badge">Live Interactive Demo</span></h1>
+        <p>Supply Chain SLA, Courier Benchmarking & RTO Margin Leakage Analytics</p>
+      </div>
+      <div class="filters">
+        <select id="zoneFilter" aria-label="Filter by Zone">
+          <option value="ALL">All Zones (Pan-India)</option>
+          <option value="West">West Zone (Mumbai / Pune / GJ)</option>
+          <option value="North">North Zone (Delhi NCR / UP)</option>
+          <option value="South">South Zone (BLR / HYD / CHN)</option>
+          <option value="East">East & NE Zone (CCU / GHY)</option>
+        </select>
+        <select id="courierFilter" aria-label="Filter by Courier">
+          <option value="ALL">All Courier Partners</option>
+          <option value="Delhivery">Delhivery Surface</option>
+          <option value="BlueDart">BlueDart Air</option>
+          <option value="Xpressbees">Xpressbees</option>
+          <option value="Shadowfax">Shadowfax</option>
+        </select>
+        <button class="reset-btn" id="resetBtn">Reset Filters</button>
+      </div>
+    </header>
+
+    <!-- KPI Cards -->
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Shipments</div>
+        <div class="kpi-value" id="kpiShipments">—</div>
+        <div class="kpi-delta pos" id="kpiShipDelta">+11.4% vs prior 30d</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">On-Time Delivery (SLA)</div>
+        <div class="kpi-value" id="kpiOtd">—</div>
+        <div class="kpi-delta" id="kpiOtdDelta">Target benchmark: 90.0%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">RTO Return Rate</div>
+        <div class="kpi-value" id="kpiRto">—</div>
+        <div class="kpi-delta" id="kpiRtoDelta">COD share drives 74% of RTO</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Avg. Transit Time</div>
+        <div class="kpi-value" id="kpiTransit">—</div>
+        <div class="kpi-delta" id="kpiTransitDelta">Dispatch-to-doorstep</div>
+      </div>
+    </section>
+
+    <!-- Main Charts -->
+    <section class="charts-grid">
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Weekly Delivery SLA vs. RTO Trend</span>
+          <span class="panel-sub">Last 8 Weeks (%)</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="trendChart"></canvas>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Shipment Outcome Split</span>
+          <span class="panel-sub">Order Volume Breakdown</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="outcomeChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom Section: Courier Comparison + Bottleneck Lanes -->
+    <section class="bottom-grid">
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Avg. Transit Days by Courier</span>
+          <span class="panel-sub">Lower is faster</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="courierChart"></canvas>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">High-Risk Fulfillment Lanes (Bottleneck Watchlist)</span>
+          <span class="panel-sub">Sorted by RTO & SLA impact</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Lane / Zone</th>
+              <th>Courier</th>
+              <th>Shipments</th>
+              <th>Avg Days</th>
+              <th>RTO %</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="laneTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <div>Built by <strong>Runal Bhosale</strong> • Data & BI Consulting (Python • SQL • Power BI • Web Dashboards)</div>
+      <div>
+        <a href="https://github.com/Runal21/logilens-supply-chain-analytics" target="_blank" rel="noopener">GitHub Repo</a> • 
+        <a href="https://www.linkedin.com/in/runal-bhosale" target="_blank" rel="noopener">LinkedIn</a> • 
+        <a href="mailto:rubhosale21@gmail.com">Hire for Async BI Setup</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Structured sample dataset representing cleaned SQL/Python output
+    const lanesData = [
+      { zone: "West",  lane: "Mumbai → Pune / Nashik",   courier: "BlueDart",   shipments: 4280, otd: 94.8, rto: 6.4,  transit: 1.8 },
+      { zone: "West",  lane: "Mumbai → Ahmedabad / Surat",courier: "Delhivery",  shipments: 3610, otd: 91.2, rto: 8.9,  transit: 2.3 },
+      { zone: "South", lane: "Mumbai → Bengaluru",       courier: "BlueDart",   shipments: 3940, otd: 93.1, rto: 7.5,  transit: 2.1 },
+      { zone: "South", lane: "Mumbai → Chennai / Hyd",   courier: "Xpressbees", shipments: 2890, otd: 87.4, rto: 11.8, transit: 3.1 },
+      { zone: "North", lane: "Mumbai → Delhi NCR",       courier: "Delhivery",  shipments: 4520, otd: 86.2, rto: 14.6, transit: 3.4 },
+      { zone: "North", lane: "Mumbai → Lucknow / Kanpur",courier: "Shadowfax",  shipments: 2140, otd: 78.5, rto: 21.4, transit: 4.6 },
+      { zone: "East",  lane: "Mumbai → Kolkata",         courier: "Xpressbees", shipments: 1980, otd: 81.9, rto: 17.9, transit: 4.2 },
+      { zone: "East",  lane: "Mumbai → Guwahati / Patna",courier: "Shadowfax",  shipments: 1320, otd: 73.4, rto: 24.8, transit: 5.4 }
+    ];
+
+    const weeklyLabels = ["Wk 1", "Wk 2", "Wk 3", "Wk 4", "Wk 5", "Wk 6", "Wk 7", "Wk 8"];
+    const baseOtdTrend = [85.2, 86.0, 86.8, 85.9, 87.5, 88.4, 89.1, 89.8];
+    const baseRtoTrend = [15.8, 15.1, 14.6, 15.2, 13.9, 13.1, 12.6, 12.1];
+
+    Chart.defaults.color = "#94a3b8";
+    Chart.defaults.borderColor = "rgba(31, 41, 61, 0.7)";
+
+    // Initialize Charts
+    const trendChart = new Chart(document.getElementById("trendChart"), {
+      type: "line",
+      data: {
+        labels: weeklyLabels,
+        datasets: [
+          {
+            label: "On-Time Delivery (%)",
+            data: [...baseOtdTrend],
+            borderColor: "#38bdf8",
+            backgroundColor: "rgba(56, 189, 248, 0.12)",
+            tension: 0.35,
+            fill: true,
+            pointRadius: 3
+          },
+          {
+            label: "RTO Rate (%)",
+            data: [...baseRtoTrend],
+            borderColor: "#f87171",
+            backgroundColor: "rgba(248, 113, 113, 0.08)",
+            tension: 0.35,
+            fill: false,
+            pointRadius: 3
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: "top", align: "end" } },
+        scales: {
+          y: { min: 0, max: 100, ticks: { callback: v => v + "%" } },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+
+    const outcomeChart = new Chart(document.getElementById("outcomeChart"), {
+      type: "doughnut",
+      data: {
+        labels: ["Delivered On-Time", "Delayed Delivery", "RTO (Returned)"],
+        datasets: [{
+          data: [78, 9, 13],
+          backgroundColor: ["#34d399", "#fbbf24", "#f87171"],
+          borderWidth: 0,
+          hoverOffset: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: "68%",
+        plugins: {
+          legend: { position: "bottom", labels: { boxWidth: 12, padding: 14 } }
+        }
+      }
+    });
+
+    const courierChart = new Chart(document.getElementById("courierChart"), {
+      type: "bar",
+      data: {
+        labels: ["BlueDart", "Delhivery", "Xpressbees", "Shadowfax"],
+        datasets: [{
+          label: "Avg Transit (Days)",
+          data: [1.95, 2.85, 3.65, 5.0],
+          backgroundColor: ["#38bdf8", "#818cf8", "#fbbf24", "#f87171"],
+          borderRadius: 6,
+          barThickness: 26
+        }]
+      },
+      options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { beginAtZero: true, max: 6, title: { display: true, text: "Days" } },
+          y: { grid: { display: false } }
+        }
+      }
+    });
+
+    function updateDashboard() {
+      const selectedZone = document.getElementById("zoneFilter").value;
+      const selectedCourier = document.getElementById("courierFilter").value;
+
+      const filtered = lanesData.filter(row => {
+        const zoneOk = selectedZone === "ALL" || row.zone === selectedZone;
+        const courierOk = selectedCourier === "ALL" || row.courier === selectedCourier;
+        return zoneOk && courierOk;
+      });
+
+      const tbody = document.getElementById("laneTableBody");
+      tbody.innerHTML = "";
+
+      if (filtered.length === 0) {
+        document.getElementById("kpiShipments").textContent = "0";
+        document.getElementById("kpiOtd").textContent = "—";
+        document.getElementById("kpiRto").textContent = "—";
+        document.getElementById("kpiTransit").textContent = "—";
+        tbody.innerHTML = `<tr><td colspan="6" style="color:#94a3b8;text-align:center;padding:20px;">No lanes match this exact filter combination. Click Reset Filters.</td></tr>`;
+        return;
+      }
+
+      // Weighted aggregations
+      const totalShipments = filtered.reduce((acc, r) => acc + r.shipments, 0);
+      const weightedOtd = filtered.reduce((acc, r) => acc + r.otd * r.shipments, 0) / totalShipments;
+      const weightedRto = filtered.reduce((acc, r) => acc + r.rto * r.shipments, 0) / totalShipments;
+      const weightedTransit = filtered.reduce((acc, r) => acc + r.transit * r.shipments, 0) / totalShipments;
+
+      document.getElementById("kpiShipments").textContent = totalShipments.toLocaleString("en-IN");
+      document.getElementById("kpiOtd").textContent = weightedOtd.toFixed(1) + "%";
+      document.getElementById("kpiRto").textContent = weightedRto.toFixed(1) + "%";
+      document.getElementById("kpiTransit").textContent = weightedTransit.toFixed(1) + " days";
+
+      // Delta styling
+      const otdDeltaEl = document.getElementById("kpiOtdDelta");
+      otdDeltaEl.className = "kpi-delta " + (weightedOtd >= 90 ? "pos" : weightedOtd >= 84 ? "warn" : "neg");
+      otdDeltaEl.textContent = weightedOtd >= 90 ? "Above 90.0% SLA target" : `${(90 - weightedOtd).toFixed(1)}% below SLA target`;
+
+      const rtoDeltaEl = document.getElementById("kpiRtoDelta");
+      rtoDeltaEl.className = "kpi-delta " + (weightedRto <= 10 ? "pos" : weightedRto <= 15 ? "warn" : "neg");
+      rtoDeltaEl.textContent = weightedRto <= 10 ? "Healthy RTO threshold" : "High COD return leakage";
+
+      const transitDeltaEl = document.getElementById("kpiTransitDelta");
+      transitDeltaEl.className = "kpi-delta " + (weightedTransit <= 2.5 ? "pos" : weightedTransit <= 3.8 ? "warn" : "neg");
+      transitDeltaEl.textContent = weightedTransit <= 2.5 ? "Fast metro turnaround" : "Last-mile delay risk";
+
+      // Update Trend Chart dynamically based on filtered baseline
+      const otdShift = weightedOtd - 87.6;
+      const rtoShift = weightedRto - 13.4;
+      trendChart.data.datasets[0].data = baseOtdTrend.map(v => Math.min(99, Math.max(50, +(v + otdShift).toFixed(1))));
+      trendChart.data.datasets[1].data = baseRtoTrend.map(v => Math.min(45, Math.max(2, +(v + rtoShift).toFixed(1))));
+      trendChart.update();
+
+      // Update Doughnut Split
+      const deliveredOnTime = Math.max(0, +(100 - weightedRto - (100 - weightedOtd) * 0.55).toFixed(1));
+      const rtoPct = +weightedRto.toFixed(1);
+      const delayedPct = Math.max(0, +(100 - deliveredOnTime - rtoPct).toFixed(1));
+      outcomeChart.data.datasets[0].data = [deliveredOnTime, delayedPct, rtoPct];
+      outcomeChart.update();
+
+      // Sort lanes by highest RTO first
+      const sorted = [...filtered].sort((a, b) => b.rto - a.rto);
+      sorted.forEach(row => {
+        const pillClass = row.rto >= 17 ? "pill-bad" : row.rto >= 11 ? "pill-warn" : "pill-good";
+        const statusText = row.rto >= 17 ? "Action Needed" : row.rto >= 11 ? "Monitor" : "Optimal";
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><strong>${row.lane}</strong></td>
+          <td>${row.courier}</td>
+          <td>${row.shipments.toLocaleString("en-IN")}</td>
+          <td>${row.transit.toFixed(1)}d</td>
+          <td>${row.rto.toFixed(1)}%</td>
+          <td><span class="status-pill ${pillClass}">${statusText}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.getElementById("zoneFilter").addEventListener("change", updateDashboard);
+    document.getElementById("courierFilter").addEventListener("change", updateDashboard);
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      document.getElementById("zoneFilter").value = "ALL";
+      document.getElementById("courierFilter").value = "ALL";
+      updateDashboard();
+    });
+
+    updateDashboard();
+  </script>
+</body>
+  </html>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LogiLens | Supply Chain & RTO Performance Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg-primary: #0b0f17;
+      --bg-card: #131926;
+      --bg-card-hover: #182030;
+      --border: #1f293d;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.12);
+      --success: #34d399;
+      --warning: #fbbf24;
+      --danger: #f87171;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      padding: 24px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    /* Header & Controls */
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .brand h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: var(--accent-soft);
+      color: var(--accent);
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+    }
+
+    .brand p {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      margin-top: 4px;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    select, button {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 9px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    select:hover, button:hover {
+      border-color: var(--accent);
+      background: var(--bg-card-hover);
+    }
+
+    button.reset-btn {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+    }
+
+    .kpi-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .kpi-value {
+      font-size: 1.85rem;
+      font-weight: 700;
+      margin: 8px 0 4px;
+      letter-spacing: -0.02em;
+    }
+
+    .kpi-delta {
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pos { color: var(--success); }
+    .neg { color: var(--danger); }
+    .warn { color: var(--warning); }
+
+    /* Charts Layout */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 16px;
+    }
+
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .panel-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 270px;
+      width: 100%;
+    }
+
+    /* Bottom Grid */
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1.8fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .bottom-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    th {
+      text-align: left;
+      color: var(--text-muted);
+      font-weight: 500;
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    td {
+      padding: 12px 8px;
+      border-bottom: 1px solid rgba(31, 41, 61, 0.6);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .status-pill {
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .pill-good { background: rgba(52, 211, 153, 0.14); color: var(--success); }
+    .pill-warn { background: rgba(251, 191, 36, 0.14); color: var(--warning); }
+    .pill-bad  { background: rgba(248, 113, 113, 0.14); color: var(--danger); }
+
+    footer {
+      margin-top: 28px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <h1>LogiLens <span class="badge">Live Interactive Demo</span></h1>
+        <p>Supply Chain SLA, Courier Benchmarking & RTO Margin Leakage Analytics</p>
+      </div>
+      <div class="filters">
+        <select id="zoneFilter" aria-label="Filter by Zone">
+          <option value="ALL">All Zones (Pan-India)</option>
+          <option value="West">West Zone (Mumbai / Pune / GJ)</option>
+          <option value="North">North Zone (Delhi NCR / UP)</option>
+          <option value="South">South Zone (BLR / HYD / CHN)</option>
+          <option value="East">East & NE Zone (CCU / GHY)</option>
+        </select>
+        <select id="courierFilter" aria-label="Filter by Courier">
+          <option value="ALL">All Courier Partners</option>
+          <option value="Delhivery">Delhivery Surface</option>
+          <option value="BlueDart">BlueDart Air</option>
+          <option value="Xpressbees">Xpressbees</option>
+          <option value="Shadowfax">Shadowfax</option>
+        </select>
+        <button class="reset-btn" id="resetBtn">Reset Filters</button>
+      </div>
+    </header>
+
+    <!-- KPI Cards -->
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Shipments</div>
+        <div class="kpi-value" id="kpiShipments">—</div>
+        <div class="kpi-delta pos" id="kpiShipDelta">+11.4% vs prior 30d</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">On-Time Delivery (SLA)</div>
+        <div class="kpi-value" id="kpiOtd">—</div>
+        <div class="kpi-delta" id="kpiOtdDelta">Target benchmark: 90.0%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">RTO Return Rate</div>
+        <div class="kpi-value" id="kpiRto">—</div>
+        <div class="kpi-delta" id="kpiRtoDelta">COD share drives 74% of RTO</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Avg. Transit Time</div>
+        <div class="kpi-value" id="kpiTransit">—</div>
+        <div class="kpi-delta" id="kpiTransitDelta">Dispatch-to-doorstep</div>
+      </div>
+    </section>
+
+    <!-- Main Charts -->
+    <section class="charts-grid">
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Weekly Delivery SLA vs. RTO Trend</span>
+          <span class="panel-sub">Last 8 Weeks (%)</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="trendChart"></canvas>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Shipment Outcome Split</span>
+          <span class="panel-sub">Order Volume Breakdown</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="outcomeChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom Section: Courier Comparison + Bottleneck Lanes -->
+    <section class="bottom-grid">
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Avg. Transit Days by Courier</span>
+          <span class="panel-sub">Lower is faster</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="courierChart"></canvas>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">High-Risk Fulfillment Lanes (Bottleneck Watchlist)</span>
+          <span class="panel-sub">Sorted by RTO & SLA impact</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Lane / Zone</th>
+              <th>Courier</th>
+              <th>Shipments</th>
+              <th>Avg Days</th>
+              <th>RTO %</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="laneTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <div>Built by <strong>Runal Bhosale</strong> • Data & BI Consulting (Python • SQL • Power BI • Web Dashboards)</div>
+      <div>
+        <a href="https://github.com/Runal21/logilens-supply-chain-analytics" target="_blank" rel="noopener">GitHub Repo</a> • 
+        <a href="https://www.linkedin.com/in/runal-bhosale" target="_blank" rel="noopener">LinkedIn</a> • 
+        <a href="mailto:rubhosale21@gmail.com">Hire for Async BI Setup</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Structured sample dataset representing cleaned SQL/Python output
+    const lanesData = [
+      { zone: "West",  lane: "Mumbai → Pune / Nashik",   courier: "BlueDart",   shipments: 4280, otd: 94.8, rto: 6.4,  transit: 1.8 },
+      { zone: "West",  lane: "Mumbai → Ahmedabad / Surat",courier: "Delhivery",  shipments: 3610, otd: 91.2, rto: 8.9,  transit: 2.3 },
+      { zone: "South", lane: "Mumbai → Bengaluru",       courier: "BlueDart",   shipments: 3940, otd: 93.1, rto: 7.5,  transit: 2.1 },
+      { zone: "South", lane: "Mumbai → Chennai / Hyd",   courier: "Xpressbees", shipments: 2890, otd: 87.4, rto: 11.8, transit: 3.1 },
+      { zone: "North", lane: "Mumbai → Delhi NCR",       courier: "Delhivery",  shipments: 4520, otd: 86.2, rto: 14.6, transit: 3.4 },
+      { zone: "North", lane: "Mumbai → Lucknow / Kanpur",courier: "Shadowfax",  shipments: 2140, otd: 78.5, rto: 21.4, transit: 4.6 },
+      { zone: "East",  lane: "Mumbai → Kolkata",         courier: "Xpressbees", shipments: 1980, otd: 81.9, rto: 17.9, transit: 4.2 },
+      { zone: "East",  lane: "Mumbai → Guwahati / Patna",courier: "Shadowfax",  shipments: 1320, otd: 73.4, rto: 24.8, transit: 5.4 }
+    ];
+
+    const weeklyLabels = ["Wk 1", "Wk 2", "Wk 3", "Wk 4", "Wk 5", "Wk 6", "Wk 7", "Wk 8"];
+    const baseOtdTrend = [85.2, 86.0, 86.8, 85.9, 87.5, 88.4, 89.1, 89.8];
+    const baseRtoTrend = [15.8, 15.1, 14.6, 15.2, 13.9, 13.1, 12.6, 12.1];
+
+    Chart.defaults.color = "#94a3b8";
+    Chart.defaults.borderColor = "rgba(31, 41, 61, 0.7)";
+
+    // Initialize Charts
+    const trendChart = new Chart(document.getElementById("trendChart"), {
+      type: "line",
+      data: {
+        labels: weeklyLabels,
+        datasets: [
+          {
+            label: "On-Time Delivery (%)",
+            data: [...baseOtdTrend],
+            borderColor: "#38bdf8",
+            backgroundColor: "rgba(56, 189, 248, 0.12)",
+            tension: 0.35,
+            fill: true,
+            pointRadius: 3
+          },
+          {
+            label: "RTO Rate (%)",
+            data: [...baseRtoTrend],
+            borderColor: "#f87171",
+            backgroundColor: "rgba(248, 113, 113, 0.08)",
+            tension: 0.35,
+            fill: false,
+            pointRadius: 3
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: "top", align: "end" } },
+        scales: {
+          y: { min: 0, max: 100, ticks: { callback: v => v + "%" } },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+
+    const outcomeChart = new Chart(document.getElementById("outcomeChart"), {
+      type: "doughnut",
+      data: {
+        labels: ["Delivered On-Time", "Delayed Delivery", "RTO (Returned)"],
+        datasets: [{
+          data: [78, 9, 13],
+          backgroundColor: ["#34d399", "#fbbf24", "#f87171"],
+          borderWidth: 0,
+          hoverOffset: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: "68%",
+        plugins: {
+          legend: { position: "bottom", labels: { boxWidth: 12, padding: 14 } }
+        }
+      }
+    });
+
+    const courierChart = new Chart(document.getElementById("courierChart"), {
+      type: "bar",
+      data: {
+        labels: ["BlueDart", "Delhivery", "Xpressbees", "Shadowfax"],
+        datasets: [{
+          label: "Avg Transit (Days)",
+          data: [1.95, 2.85, 3.65, 5.0],
+          backgroundColor: ["#38bdf8", "#818cf8", "#fbbf24", "#f87171"],
+          borderRadius: 6,
+          barThickness: 26
+        }]
+      },
+      options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { beginAtZero: true, max: 6, title: { display: true, text: "Days" } },
+          y: { grid: { display: false } }
+        }
+      }
+    });
+
+    function updateDashboard() {
+      const selectedZone = document.getElementById("zoneFilter").value;
+      const selectedCourier = document.getElementById("courierFilter").value;
+
+      const filtered = lanesData.filter(row => {
+        const zoneOk = selectedZone === "ALL" || row.zone === selectedZone;
+        const courierOk = selectedCourier === "ALL" || row.courier === selectedCourier;
+        return zoneOk && courierOk;
+      });
+
+      const tbody = document.getElementById("laneTableBody");
+      tbody.innerHTML = "";
+
+      if (filtered.length === 0) {
+        document.getElementById("kpiShipments").textContent = "0";
+        document.getElementById("kpiOtd").textContent = "—";
+        document.getElementById("kpiRto").textContent = "—";
+        document.getElementById("kpiTransit").textContent = "—";
+        tbody.innerHTML = `<tr><td colspan="6" style="color:#94a3b8;text-align:center;padding:20px;">No lanes match this exact filter combination. Click Reset Filters.</td></tr>`;
+        return;
+      }
+
+      // Weighted aggregations
+      const totalShipments = filtered.reduce((acc, r) => acc + r.shipments, 0);
+      const weightedOtd = filtered.reduce((acc, r) => acc + r.otd * r.shipments, 0) / totalShipments;
+      const weightedRto = filtered.reduce((acc, r) => acc + r.rto * r.shipments, 0) / totalShipments;
+      const weightedTransit = filtered.reduce((acc, r) => acc + r.transit * r.shipments, 0) / totalShipments;
+
+      document.getElementById("kpiShipments").textContent = totalShipments.toLocaleString("en-IN");
+      document.getElementById("kpiOtd").textContent = weightedOtd.toFixed(1) + "%";
+      document.getElementById("kpiRto").textContent = weightedRto.toFixed(1) + "%";
+      document.getElementById("kpiTransit").textContent = weightedTransit.toFixed(1) + " days";
+
+      // Delta styling
+      const otdDeltaEl = document.getElementById("kpiOtdDelta");
+      otdDeltaEl.className = "kpi-delta " + (weightedOtd >= 90 ? "pos" : weightedOtd >= 84 ? "warn" : "neg");
+      otdDeltaEl.textContent = weightedOtd >= 90 ? "Above 90.0% SLA target" : `${(90 - weightedOtd).toFixed(1)}% below SLA target`;
+
+      const rtoDeltaEl = document.getElementById("kpiRtoDelta");
+      rtoDeltaEl.className = "kpi-delta " + (weightedRto <= 10 ? "pos" : weightedRto <= 15 ? "warn" : "neg");
+      rtoDeltaEl.textContent = weightedRto <= 10 ? "Healthy RTO threshold" : "High COD return leakage";
+
+      const transitDeltaEl = document.getElementById("kpiTransitDelta");
+      transitDeltaEl.className = "kpi-delta " + (weightedTransit <= 2.5 ? "pos" : weightedTransit <= 3.8 ? "warn" : "neg");
+      transitDeltaEl.textContent = weightedTransit <= 2.5 ? "Fast metro turnaround" : "Last-mile delay risk";
+
+      // Update Trend Chart dynamically based on filtered baseline
+      const otdShift = weightedOtd - 87.6;
+      const rtoShift = weightedRto - 13.4;
+      trendChart.data.datasets[0].data = baseOtdTrend.map(v => Math.min(99, Math.max(50, +(v + otdShift).toFixed(1))));
+      trendChart.data.datasets[1].data = baseRtoTrend.map(v => Math.min(45, Math.max(2, +(v + rtoShift).toFixed(1))));
+      trendChart.update();
+
+      // Update Doughnut Split
+      const deliveredOnTime = Math.max(0, +(100 - weightedRto - (100 - weightedOtd) * 0.55).toFixed(1));
+      const rtoPct = +weightedRto.toFixed(1);
+      const delayedPct = Math.max(0, +(100 - deliveredOnTime - rtoPct).toFixed(1));
+      outcomeChart.data.datasets[0].data = [deliveredOnTime, delayedPct, rtoPct];
+      outcomeChart.update();
+
+      // Sort lanes by highest RTO first
+      const sorted = [...filtered].sort((a, b) => b.rto - a.rto);
+      sorted.forEach(row => {
+        const pillClass = row.rto >= 17 ? "pill-bad" : row.rto >= 11 ? "pill-warn" : "pill-good";
+        const statusText = row.rto >= 17 ? "Action Needed" : row.rto >= 11 ? "Monitor" : "Optimal";
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><strong>${row.lane}</strong></td>
+          <td>${row.courier}</td>
+          <td>${row.shipments.toLocaleString("en-IN")}</td>
+          <td>${row.transit.toFixed(1)}d</td>
+          <td>${row.rto.toFixed(1)}%</td>
+          <td><span class="status-pill ${pillClass}">${statusText}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.getElementById("zoneFilter").addEventListener("change", updateDashboard);
+    document.getElementById("courierFilter").addEventListener("change", updateDashboard);
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      document.getElementById("zoneFilter").value = "ALL";
+      document.getElementById("courierFilter").value = "ALL";
+      updateDashboard();
+    });
+
+    updateDashboard();
+  </script>
+</body>
+</html>
