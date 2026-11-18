@@ -1,52 +1,38 @@
-# 🚚 LogiLens: Delivery Performance Analysis
+# 📦 LogiLens: Logistics, Delivery & RTO Performance Analytics
 
-Analyze pharmaceutical shipment data to uncover delivery delays, cost inefficiencies, and risk factors—helping logistics teams make smarter, data-driven decisions.
+> **Turning raw shipment logs into actionable visibility on transit delays, courier efficiency, and margin leakage.**
 
----
-
-## 📌 Objective
-
-To improve on-time delivery and reduce shipment risks by identifying key factors such as:
-
-- Shipment mode (Air, Sea, etc.)
-- Vendor and team performance
-- PO processing time
-- INCO terms
-- Shipment weight and insurance cost
+![LogiLens Executive Dashboard]
 
 ---
 
-## 🔍 Key Insights
+### 🎯 The Business Problem
+E-commerce and D2C brands lose significant net margin to untracked shipping delays, regional carrier bottlenecks, and high Return-to-Origin (RTO) rates. Without consolidated visibility across dispatch, transit, and delivery stages, operations teams react to customer complaints instead of preventing SLA breaches.
 
-- **Air shipments** are faster but costlier.
-- **Long PO processing times** lead to delays.
-- **Certain teams & countries** perform more efficiently.
-- **INCO terms** significantly affect delivery reliability.
-- **Heavier shipments** incur higher insurance costs.
+### 💡 The Solution
+**LogiLens** is an end-to-end logistics analytics pipeline and interactive dashboard designed to track shipment lifecycles, benchmark courier partner performance, and pinpoint geographic delay clusters.
 
----
+* **Automated Data Pipeline:** Cleaned and standardized raw dispatch/delivery logs using **Python (`pandas`)** and **SQL**, handling missing timestamps, duplicate tracking IDs, and status normalization.
+* **SLA & Bottleneck Tracking:** Built calculated metrics for Order-to-Dispatch time, Transit SLA compliance, and On-Time Delivery (OTD) rates across zones.
+* **Executive Dashboard:** Designed an interactive visual interface allowing operations managers to filter performance by region, courier partner, warehouse origin, and order priority.
 
-## 🛠️ Tools Used
-
-- Python, Pandas, NumPy
-- Seaborn, Matplotlib, Plotly
-- Jupyter Notebook
-
----
-
-## 📊 Deliverables
-
-- 15 EDA visualizations (Univariate, Bivariate, Multivariate)
-- Actionable insights for logistics optimization
-- Recommendations for better vendor and route selection
+### 📈 Key Business Insights Delivered
+* **Carrier Benchmarking:** Identified underperforming courier routes contributing to the highest transit delays, enabling data-backed carrier reallocation.
+* **Regional Delay Hotspots:** Isolated specific destination zones with recurring last-mile bottlenecks to adjust customer delivery expectations and safety buffers.
+* **Cost & SLA Optimization:** Highlighted peak-day dispatch backlogs so warehouse teams can rebalance staffing before SLA penalties occur.
 
 ---
 
-## ✅ Outcome
-
-The analysis enables better shipment planning, vendor negotiations, and cost control, contributing to a more reliable global supply chain.
+### 🛠️ Tech Stack & Methodology
+* **Data Cleaning & Transformation:** Python (`pandas`, `numpy`), SQL
+* **Exploratory Analysis & KPIs:** Delivery SLA %, Avg. Transit Days, Delay Variance, Zone-wise Fulfillment Rate
+* **Visualization:** Power BI / Tableau / Interactive Web Charts
 
 ---
 
-📎 **Notebook:** `LogiLens_Delivery_Performance_Analysis.ipynb`  
-📬 **Contact:** [rubhosale21@gmail.com]
+### 🤝 Need a Similar Dashboard for Your Business?
+I help e-commerce, D2C, and operations-heavy brands automate messy CSV exports (Shopify, Shiprocket, ERP logs) into clean, self-updating dashboards—**delivered asynchronously with zero meeting overhead.**
+
+* **Portfolio & GitHub:** [github.com/Runal21](https://github.com/Runal21)
+* **LinkedIn:** [linkedin.com/in/runal-bhosale](https://www.linkedin.com/in/runal-bhosale)
+* **Email:** rubhosale21@gmail.com
