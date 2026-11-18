@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LogiLens | Supply Chain & RTO Performance Dashboard</title>
+  <title>LogiLens | Global Pharmaceutical Supply Chain & Delivery Performance</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
@@ -35,11 +35,10 @@
     }
 
     .container {
-      max-width: 1280px;
+      max-width: 1320px;
       margin: 0 auto;
     }
 
-    /* Header & Controls */
     header {
       display: flex;
       flex-wrap: wrap;
@@ -107,7 +106,6 @@
       font-weight: 500;
     }
 
-    /* KPI Grid */
     .kpi-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -123,14 +121,14 @@
     }
 
     .kpi-label {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
 
     .kpi-value {
-      font-size: 1.85rem;
+      font-size: 1.8rem;
       font-weight: 700;
       margin: 8px 0 4px;
       letter-spacing: -0.02em;
@@ -138,16 +136,13 @@
 
     .kpi-delta {
       font-size: 0.8rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      color: var(--text-muted);
     }
 
     .pos { color: var(--success); }
     .neg { color: var(--danger); }
     .warn { color: var(--warning); }
 
-    /* Charts Layout */
     .charts-grid {
       display: grid;
       grid-template-columns: 2fr 1fr;
@@ -155,9 +150,9 @@
       margin-bottom: 24px;
     }
 
-    @media (max-width: 900px) {
-      .charts-grid {
-        grid-template-columns: 1fr;
+    @media (max-width: 920px) {
+      .charts-grid, .bottom-grid {
+        grid-template-columns: 1fr !important;
       }
     }
 
@@ -172,6 +167,7 @@
       display: flex;
       justify-content: space-between;
       align-items: baseline;
+      gap: 8px;
       margin-bottom: 16px;
     }
 
@@ -187,27 +183,24 @@
 
     .chart-wrap {
       position: relative;
-      height: 270px;
+      height: 275px;
       width: 100%;
     }
 
-    /* Bottom Grid */
     .bottom-grid {
       display: grid;
-      grid-template-columns: 1.2fr 1.8fr;
+      grid-template-columns: 1.15fr 1.85fr;
       gap: 16px;
     }
 
-    @media (max-width: 900px) {
-      .bottom-grid {
-        grid-template-columns: 1fr;
-      }
+    .table-scroll {
+      overflow-x: auto;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
     }
 
     th {
@@ -216,14 +209,16 @@
       font-weight: 500;
       padding: 10px 8px;
       border-bottom: 1px solid var(--border);
-      font-size: 0.76rem;
+      font-size: 0.74rem;
       text-transform: uppercase;
       letter-spacing: 0.04em;
+      white-space: nowrap;
     }
 
     td {
-      padding: 12px 8px;
+      padding: 11px 8px;
       border-bottom: 1px solid rgba(31, 41, 61, 0.6);
+      white-space: nowrap;
     }
 
     tr:last-child td {
@@ -233,7 +228,7 @@
     .status-pill {
       padding: 3px 8px;
       border-radius: 6px;
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       font-weight: 600;
     }
 
@@ -267,23 +262,35 @@
   <div class="container">
     <header>
       <div class="brand">
-        <h1>LogiLens <span class="badge">Live Interactive Demo</span></h1>
-        <p>Supply Chain SLA, Courier Benchmarking & RTO Margin Leakage Analytics</p>
+        <h1>LogiLens <span class="badge">SCMS Dataset • 10,324 Shipments</span></h1>
+        <p>Global Pharmaceutical Supply Chain, Delivery SLA & Freight Cost Analytics (2006–2015)</p>
       </div>
       <div class="filters">
-        <select id="zoneFilter" aria-label="Filter by Zone">
-          <option value="ALL">All Zones (Pan-India)</option>
-          <option value="West">West Zone (Mumbai / Pune / GJ)</option>
-          <option value="North">North Zone (Delhi NCR / UP)</option>
-          <option value="South">South Zone (BLR / HYD / CHN)</option>
-          <option value="East">East & NE Zone (CCU / GHY)</option>
+        <select id="countryFilter" aria-label="Filter by Destination Country">
+          <option value="ALL">All Countries (43 Destinations)</option>
+          <option value="South Africa">South Africa (1,406)</option>
+          <option value="Nigeria">Nigeria (1,194)</option>
+          <option value="Côte d'Ivoire">Côte d'Ivoire (1,083)</option>
+          <option value="Uganda">Uganda (779)</option>
+          <option value="Vietnam">Vietnam (688)</option>
+          <option value="Zambia">Zambia (683)</option>
+          <option value="Haiti">Haiti (655)</option>
+          <option value="Mozambique">Mozambique (631)</option>
+          <option value="Zimbabwe">Zimbabwe (538)</option>
+          <option value="Tanzania">Tanzania (519)</option>
+          <option value="Rwanda">Rwanda (430)</option>
+          <option value="Congo, DRC">Congo, DRC (333)</option>
+          <option value="Guyana">Guyana (237)</option>
+          <option value="Ethiopia">Ethiopia (216)</option>
+          <option value="South Sudan">South Sudan (164)</option>
         </select>
-        <select id="courierFilter" aria-label="Filter by Courier">
-          <option value="ALL">All Courier Partners</option>
-          <option value="Delhivery">Delhivery Surface</option>
-          <option value="BlueDart">BlueDart Air</option>
-          <option value="Xpressbees">Xpressbees</option>
-          <option value="Shadowfax">Shadowfax</option>
+        <select id="modeFilter" aria-label="Filter by Shipment Mode">
+          <option value="ALL">All Shipment Modes</option>
+          <option value="Air">Air (6,113)</option>
+          <option value="Truck">Truck (2,830)</option>
+          <option value="Air Charter">Air Charter (650)</option>
+          <option value="Ocean">Ocean (371)</option>
+          <option value="Unknown">Unknown (360)</option>
         </select>
         <button class="reset-btn" id="resetBtn">Reset Filters</button>
       </div>
@@ -294,22 +301,27 @@
       <div class="kpi-card">
         <div class="kpi-label">Total Shipments</div>
         <div class="kpi-value" id="kpiShipments">—</div>
-        <div class="kpi-delta pos" id="kpiShipDelta">+11.4% vs prior 30d</div>
+        <div class="kpi-delta" id="kpiShipSub">Across 43 destination countries</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">On-Time Delivery (SLA)</div>
+        <div class="kpi-label">On-Time Delivery Rate</div>
         <div class="kpi-value" id="kpiOtd">—</div>
-        <div class="kpi-delta" id="kpiOtdDelta">Target benchmark: 90.0%</div>
+        <div class="kpi-delta" id="kpiOtdSub">Delivered on or before schedule</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">RTO Return Rate</div>
-        <div class="kpi-value" id="kpiRto">—</div>
-        <div class="kpi-delta" id="kpiRtoDelta">COD share drives 74% of RTO</div>
+        <div class="kpi-label">Late Delivery Rate</div>
+        <div class="kpi-value" id="kpiLate">—</div>
+        <div class="kpi-delta" id="kpiLateSub">Shipments exceeding scheduled date</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Avg. Transit Time</div>
-        <div class="kpi-value" id="kpiTransit">—</div>
-        <div class="kpi-delta" id="kpiTransitDelta">Dispatch-to-doorstep</div>
+        <div class="kpi-label">Avg. Delivery Variance</div>
+        <div class="kpi-value" id="kpiDelay">—</div>
+        <div class="kpi-delta" id="kpiDelaySub">Negative = delivered ahead of schedule</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Total Cargo Value</div>
+        <div class="kpi-value" id="kpiValue">—</div>
+        <div class="kpi-delta" id="kpiFreightSub">Avg freight: —</div>
       </div>
     </section>
 
@@ -317,8 +329,8 @@
     <section class="charts-grid">
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Weekly Delivery SLA vs. RTO Trend</span>
-          <span class="panel-sub">Last 8 Weeks (%)</span>
+          <span class="panel-title">Annual On-Time Delivery vs. Delay Trend (2006–2015)</span>
+          <span class="panel-sub" id="trendSubtitle">Filtered by Shipment Mode</span>
         </div>
         <div class="chart-wrap">
           <canvas id="trendChart"></canvas>
@@ -327,8 +339,8 @@
 
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Shipment Outcome Split</span>
-          <span class="panel-sub">Order Volume Breakdown</span>
+          <span class="panel-title">Delivery Punctuality Breakdown</span>
+          <span class="panel-sub">Early vs. Exact vs. Delayed</span>
         </div>
         <div class="chart-wrap">
           <canvas id="outcomeChart"></canvas>
@@ -336,92 +348,84 @@
       </div>
     </section>
 
-    <!-- Bottom Section: Courier Comparison + Bottleneck Lanes -->
+    <!-- Bottom Section -->
     <section class="bottom-grid">
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Avg. Transit Days by Courier</span>
-          <span class="panel-sub">Lower is faster</span>
+          <span class="panel-title">Avg. Freight Cost by Mode (USD)</span>
+          <span class="panel-sub">From SCMS dataset records</span>
         </div>
         <div class="chart-wrap">
-          <canvas id="courierChart"></canvas>
+          <canvas id="modeChart"></canvas>
         </div>
       </div>
 
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">High-Risk Fulfillment Lanes (Bottleneck Watchlist)</span>
-          <span class="panel-sub">Sorted by RTO & SLA impact</span>
+          <span class="panel-title">Destination Performance & Delay Risk Watchlist</span>
+          <span class="panel-sub">Top volume countries sorted by delay rate</span>
         </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Lane / Zone</th>
-              <th>Courier</th>
-              <th>Shipments</th>
-              <th>Avg Days</th>
-              <th>RTO %</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="laneTableBody"></tbody>
-        </table>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Country</th>
+                <th>Shipments</th>
+                <th>On-Time %</th>
+                <th>Delayed %</th>
+                <th>Avg Variance</th>
+                <th>Avg Freight</th>
+                <th>Risk Status</th>
+              </tr>
+            </thead>
+            <tbody id="countryTableBody"></tbody>
+          </table>
+        </div>
       </div>
     </section>
 
     <footer>
-      <div>Built by <strong>Runal Bhosale</strong> • Data & BI Consulting (Python • SQL • Power BI • Web Dashboards)</div>
+      <div>Built by <strong>Runal Bhosale</strong> • LogiLens Supply Chain Analytics (Python • pandas • SQL • Chart.js)</div>
       <div>
-        <a href="https://github.com/Runal21/logilens-supply-chain-analytics" target="_blank" rel="noopener">GitHub Repo</a> • 
+        <a href="https://github.com/Runal21/LogiLens-Delivery-Performance-Analysis" target="_blank" rel="noopener">GitHub Repo</a> • 
         <a href="https://www.linkedin.com/in/runal-bhosale" target="_blank" rel="noopener">LinkedIn</a> • 
-        <a href="mailto:rubhosale21@gmail.com">Hire for Async BI Setup</a>
+        <a href="mailto:rubhosale21@gmail.com">rubhosale21@gmail.com</a>
       </div>
     </footer>
-  </div>
-
   <script>
-    // Structured sample dataset representing cleaned SQL/Python output
-    const lanesData = [
-      { zone: "West",  lane: "Mumbai → Pune / Nashik",   courier: "BlueDart",   shipments: 4280, otd: 94.8, rto: 6.4,  transit: 1.8 },
-      { zone: "West",  lane: "Mumbai → Ahmedabad / Surat",courier: "Delhivery",  shipments: 3610, otd: 91.2, rto: 8.9,  transit: 2.3 },
-      { zone: "South", lane: "Mumbai → Bengaluru",       courier: "BlueDart",   shipments: 3940, otd: 93.1, rto: 7.5,  transit: 2.1 },
-      { zone: "South", lane: "Mumbai → Chennai / Hyd",   courier: "Xpressbees", shipments: 2890, otd: 87.4, rto: 11.8, transit: 3.1 },
-      { zone: "North", lane: "Mumbai → Delhi NCR",       courier: "Delhivery",  shipments: 4520, otd: 86.2, rto: 14.6, transit: 3.4 },
-      { zone: "North", lane: "Mumbai → Lucknow / Kanpur",courier: "Shadowfax",  shipments: 2140, otd: 78.5, rto: 21.4, transit: 4.6 },
-      { zone: "East",  lane: "Mumbai → Kolkata",         courier: "Xpressbees", shipments: 1980, otd: 81.9, rto: 17.9, transit: 4.2 },
-      { zone: "East",  lane: "Mumbai → Guwahati / Patna",courier: "Shadowfax",  shipments: 1320, otd: 73.4, rto: 24.8, transit: 5.4 }
-    ];
+    // Exact aggregated records from SCMS_Delivery_History_Dataset.xlsx (10,324 rows)
+    const RECORDS = [{"c":"Afghanistan","m":"Air","n":3,"ot":3,"ea":0,"ex":3,"dl":0,"ds":0,"fs":1081.05,"fc":2,"vs":4617.35,"is":5.43},{"c":"Angola","m":"Air","n":5,"ot":5,"ea":0,"ex":5,"dl":0,"ds":0,"fs":30832.07,"fc":5,"vs":181600.0,"is":371.68},{"c":"Angola","m":"Truck","n":2,"ot":2,"ea":0,"ex":2,"dl":0,"ds":0,"fs":1964.63,"fc":2,"vs":16800.0,"is":26.88},{"c":"Belize","m":"Air","n":1,"ot":1,"ea":1,"ex":0,"dl":0,"ds":-14,"fs":1959.61,"fc":1,"vs":630.0,"is":1.04},{"c":"Benin","m":"Air","n":13,"ot":10,"ea":7,"ex":3,"dl":3,"ds":31,"fs":66015.17,"fc":7,"vs":787725.48,"is":1294.33},{"c":"Botswana","m":"Air","n":63,"ot":61,"ea":5,"ex":56,"dl":2,"ds":-179,"fs":133841.79,"fc":58,"vs":1546999.21,"is":2024.34},{"c":"Botswana","m":"Truck","n":4,"ot":4,"ea":0,"ex":4,"dl":0,"ds":0,"fs":1220.73,"fc":1,"vs":49900.0,"is":81.1},{"c":"Botswana","m":"Unknown","n":3,"ot":3,"ea":0,"ex":3,"dl":0,"ds":0,"fs":2867.65,"fc":3,"vs":36000.0,"is":0.0},{"c":"Burkina Faso","m":"Air","n":2,"ot":2,"ea":0,"ex":2,"dl":0,"ds":0,"fs":0.0,"fc":0,"vs":451.25,"is":0.53},{"c":"Burundi","m":"Air","n":98,"ot":60,"ea":32,"ex":28,"dl":38,"ds":-828,"fs":312042.32,"fc":56,"vs":3351580.36,"is":4012.37},{"c":"Cameroon","m":"Air","n":61,"ot":58,"ea":5,"ex":53,"dl":3,"ds":-12,"fs":1435871.76,"fc":51,"vs":10644193.37,"is":13334.8},{"c":"Cameroon","m":"Air Charter","n":14,"ot":10,"ea":10,"ex":0,"dl":4,"ds":-78,"fs":356479.73,"fc":5,"vs":3984976.82,"is":5372.54},{"c":"Congo, DRC","m":"Air","n":331,"ot":248,"ea":80,"ex":168,"dl":83,"ds":3743,"fs":699082.91,"fc":104,"vs":5465586.35,"is":6388.93},{"c":"Congo, DRC","m":"Truck","n":2,"ot":2,"ea":0,"ex":2,"dl":0,"ds":0,"fs":0.0,"fc":0,"vs":306750.0,"is":315.34},{"c":"Côte d'Ivoire","m":"Air","n":682,"ot":611,"ea":159,"ex":452,"dl":71,"ds":-885,"fs":3642499.46,"fc":485,"vs":61525853.95,"is":105829.98},{"c":"Côte d'Ivoire","m":"Air Charter","n":5,"ot":5,"ea":4,"ex":1,"dl":0,"ds":-180,"fs":31456.28,"fc":4,"vs":766244.52,"is":1237.8},{"c":"Côte d'Ivoire","m":"Ocean","n":5,"ot":5,"ea":0,"ex":5,"dl":0,"ds":0,"fs":105202.0,"fc":3,"vs":2107215.86,"is":3308.76},{"c":"Côte d'Ivoire","m":"Truck","n":278,"ot":216,"ea":186,"ex":30,"dl":62,"ds":-4776,"fs":2015601.84,"fc":166,"vs":47817434.63,"is":62948.25},{"c":"Côte d'Ivoire","m":"Unknown","n":113,"ot":112,"ea":0,"ex":112,"dl":1,"ds":14,"fs":297405.93,"fc":71,"vs":8667751.93,"is":9056.29},{"c":"Dominican Republic","m":"Air","n":49,"ot":45,"ea":22,"ex":23,"dl":4,"ds":-552,"fs":245197.92,"fc":27,"vs":3088876.79,"is":4533.55},{"c":"Dominican Republic","m":"Truck","n":3,"ot":3,"ea":0,"ex":3,"dl":0,"ds":0,"fs":666.66,"fc":1,"vs":57600.0,"is":124.18},{"c":"Ethiopia","m":"Air","n":194,"ot":182,"ea":42,"ex":140,"dl":12,"ds":-690,"fs":1845342.72,"fc":163,"vs":17664900.11,"is":30772.7},{"c":"Ethiopia","m":"Ocean","n":1,"ot":1,"ea":0,"ex":1,"dl":0,"ds":0,"fs":11729.82,"fc":1,"vs":460420.8,"is":759.69},{"c":"Ethiopia","m":"Truck","n":3,"ot":3,"ea":0,"ex":3,"dl":0,"ds":0,"fs":505.0,"fc":1,"vs":3477.48,"is":5.81},{"c":"Ethiopia","m":"Unknown","n":18,"ot":18,"ea":0,"ex":18,"dl":0,"ds":0,"fs":136068.02,"fc":6,"vs":1018200.28,"is":1574.39},{"c":"Ghana","m":"Air","n":43,"ot":35,"ea":2,"ex":33,"dl":8,"ds":152,"fs":512769.67,"fc":39,"vs":5147621.55,"is":6062.27},{"c":"Ghana","m":"Ocean","n":2,"ot":2,"ea":0,"ex":2,"dl":0,"ds":0,"fs":36083.61,"fc":2,"vs":554838.13,"is":570.37},{"c":"Ghana","m":"Truck","n":13,"ot":13,"ea":6,"ex":7,"dl":0,"ds":-165,"fs":3975.7,"fc":1,"vs":750821.42,"is":772.02},{"c":"Guatemala","m":"Air","n":15,"ot":13,"ea":5,"ex":8,"dl":2,"ds":-15,"fs":38494.98,"fc":5,"vs":655249.12,"is":1081.16},{"c":"Guinea","m":"Air","n":1,"ot":1,"ea":0,"ex":1,"dl":0,"ds":0,"fs":1804.2,"fc":1,"vs":3600.0,"is":7.76},{"c":"Guyana","m":"Air","n":229,"ot":205,"ea":101,"ex":104,"dl":24,"ds":-4122,"fs":487938.77,"fc":150,"vs":4215010.81,"is":6783.17},{"c":"Guyana","m":"Truck","n":3,"ot":3,"ea":3,"ex":0,"dl":0,"ds":-102,"fs":3178.0,"fc":1,"vs":1826.66,"is":2.25},{"c":"Guyana","m":"Unknown","n":5,"ot":5,"ea":0,"ex":5,"dl":0,"ds":0,"fs":2728.09,"fc":4,"vs":34784.0,"is":42.85},{"c":"Haiti","m":"Air","n":560,"ot":499,"ea":113,"ex":386,"dl":61,"ds":-1565,"fs":3685689.12,"fc":357,"vs":27773861.99,"is":41345.54},{"c":"Haiti","m":"Air Charter","n":4,"ot":4,"ea":4,"ex":0,"dl":0,"ds":-32,"fs":8329.13,"fc":1,"vs":7936.88,"is":17.11},{"c":"Haiti","m":"Ocean","n":83,"ot":83,"ea":0,"ex":83,"dl":0,"ds":0,"fs":303720.94,"fc":36,"vs":15089412.03,"is":17122.52},{"c":"Haiti","m":"Truck","n":6,"ot":5,"ea":0,"ex":5,"dl":1,"ds":7,"fs":0.0,"fc":0,"vs":584375.0,"is":890.85},{"c":"Haiti","m":"Unknown","n":2,"ot":2,"ea":0,"ex":2,"dl":0,"ds":0,"fs":2759.74,"fc":2,"vs":47200.0,"is":69.12},{"c":"Kazakhstan","m":"Air","n":2,"ot":2,"ea":0,"ex":2,"dl":0,"ds":0,"fs":0.0,"fc":0,"vs":35000.0,"is":56.0},{"c":"Kenya","m":"Air","n":82,"ot":68,"ea":1,"ex":67,"dl":14,"ds":148,"fs":1419913.31,"fc":77,"vs":30369909.98,"is":53629.9},{"c":"Kenya","m":"Truck","n":29,"ot":29,"ea":2,"ex":27,"dl":0,"ds":-49,"fs":9098.33,"fc":14,"vs":3561651.0,"is":6642.75},{"c":"Kyrgyzstan","m":"Air","n":2,"ot":2,"ea":0,"ex":2,"dl":0,"ds":0,"fs":0.0,"fc":0,"vs":79000.0,"is":126.4},{"c":"Lebanon","m":"Air","n":8,"ot":8,"ea":0,"ex":8,"dl":0,"ds":0,"fs":0.0,"fc":0,"vs":9.36,"is":0.0},{"c":"Lesotho","m":"Air","n":4,"ot":4,"ea":0,"ex":4,"dl":0,"ds":0,"fs":11651.41,"fc":2,"vs":253220.0,"is":263.11},{"c":"Liberia","m":"Air","n":6,"ot":6,"ea":0,"ex":6,"dl":0,"ds":0,"fs":19950.85,"fc":6,"vs":102840.0,"is":169.69},{"c":"Libya","m":"Air","n":8,"ot":7,"ea":3,"ex":4,"dl":1,"ds":-70,"fs":8361.17,"fc":4,"vs":164366.01,"is":230.43},{"c":"Malawi","m":"Air","n":10,"ot":10,"ea":0,"ex":10,"dl":0,"ds":0,"fs":20279.91,"fc":10,"vs":109456.0,"is":141.16},{"c":"Malawi","m":"Ocean","n":4,"ot":4,"ea":0,"ex":4,"dl":0,"ds":0,"fs":80140.22,"fc":4,"vs":5745000.0,"is":7106.56},{"c":"Mali","m":"Air","n":17,"ot":17,"ea":0,"ex":17,"dl":0,"ds":0,"fs":27663.9,"fc":12,"vs":146870.0,"is":162.33},{"c":"Mozambique","m":"Air","n":290,"ot":281,"ea":17,"ex":264,"dl":9,"ds":-59,"fs":1622772.82,"fc":171,"vs":40128312.64,"is":58343.03},{"c":"Mozambique","m":"Ocean","n":4,"ot":4,"ea":0,"ex":4,"dl":0,"ds":0,"fs":72387.16,"fc":3,"vs":1327040.0,"is":2189.61},{"c":"Mozambique","m":"Truck","n":337,"ot":230,"ea":132,"ex":98,"dl":107,"ds":-704,"fs":1598961.08,"fc":191,"vs":140569338.08,"is":184440.38},{"c":"Namibia","m":"Air","n":87,"ot":86,"ea":1,"ex":85,"dl":1,"ds":-15,"fs":432087.48,"fc":76,"vs":5048938.21,"is":6613.77},{"c":"Namibia","m":"Truck","n":6,"ot":6,"ea":3,"ex":3,"dl":0,"ds":-45,"fs":27063.05,"fc":3,"vs":774485.65,"is":1046.73},{"c":"Namibia","m":"Unknown","n":2,"ot":2,"ea":0,"ex":2,"dl":0,"ds":0,"fs":688.84,"fc":1,"vs":33600.0,"is":53.76},{"c":"Nigeria","m":"Air","n":547,"ot":476,"ea":123,"ex":353,"dl":71,"ds":-1208,"fs":6181882.96,"fc":350,"vs":109873063.23,"is":164621.28},{"c":"Nigeria","m":"Air Charter","n":608,"ot":537,"ea":432,"ex":105,"dl":71,"ds":-12002,"fs":7998308.92,"fc":396,"vs":238867577.26,"is":343859.92},{"c":"Nigeria","m":"Ocean","n":1,"ot":1,"ea":0,"ex":1,"dl":0,"ds":0,"fs":17096.24,"fc":1,"vs":152007.6,"is":297.93},{"c":"Nigeria","m":"Truck","n":2,"ot":2,"ea":0,"ex":2,"dl":0,"ds":0,"fs":9352.63,"fc":2,"vs":3249.9,"is":5.68},{"c":"Nigeria","m":"Unknown","n":36,"ot":36,"ea":2,"ex":34,"dl":0,"ds":-192,"fs":61909.64,"fc":15,"vs":1376206.88,"is":695.16},{"c":"Pakistan","m":"Air","n":15,"ot":15,"ea":0,"ex":15,"dl":0,"ds":0,"fs":106387.81,"fc":8,"vs":1442540.0,"is":2026.1},{"c":"Rwanda","m":"Air","n":338,"ot":325,"ea":64,"ex":261,"dl":13,"ds":-1405,"fs":4723189.23,"fc":283,"vs":43353376.33,"is":67260.16},{"c":"Rwanda","m":"Air Charter","n":1,"ot":1,"ea":1,"ex":0,"dl":0,"ds":-81,"fs":4370.8,"fc":1,"vs":3330.0,"is":5.49},{"c":"Rwanda","m":"Ocean","n":20,"ot":20,"ea":0,"ex":20,"dl":0,"ds":0,"fs":639694.39,"fc":19,"vs":11178281.71,"is":20114.38},{"c":"Rwanda","m":"Truck","n":71,"ot":47,"ea":41,"ex":6,"dl":24,"ds":-790,"fs":526238.81,"fc":47,"vs":16592595.04,"is":19416.16},{"c":"Senegal","m":"Air","n":3,"ot":2,"ea":0,"ex":2,"dl":1,"ds":3,"fs":1444.63,"fc":2,"vs":8864.0,"is":15.76},{"c":"Sierra Leone","m":"Air","n":4,"ot":4,"ea":0,"ex":4,"dl":0,"ds":0,"fs":36498.53,"fc":2,"vs":379550.0,"is":453.5},{"c":"South Africa","m":"Air","n":230,"ot":191,"ea":134,"ex":57,"dl":39,"ds":-11213,"fs":509025.96,"fc":94,"vs":24383275.04,"is":51147.57},{"c":"South Africa","m":"Ocean","n":229,"ot":164,"ea":13,"ex":151,"dl":65,"ds":2253,"fs":1977517.93,"fc":193,"vs":76166521.77,"is":139991.95},{"c":"South Africa","m":"Truck","n":905,"ot":895,"ea":107,"ex":788,"dl":10,"ds":-7555,"fs":7043.41,"fc":2,"vs":7905570.63,"is":13130.55},{"c":"South Africa","m":"Unknown","n":42,"ot":41,"ea":24,"ex":17,"dl":1,"ds":-672,"fs":0.0,"fc":0,"vs":214778.03,"is":343.66},{"c":"South Sudan","m":"Air","n":162,"ot":141,"ea":31,"ex":110,"dl":21,"ds":-175,"fs":248177.76,"fc":58,"vs":2130903.43,"is":2580.78},{"c":"South Sudan","m":"Truck","n":2,"ot":2,"ea":0,"ex":2,"dl":0,"ds":0,"fs":1641.0,"fc":1,"vs":2253.3,"is":2.79},{"c":"Sudan","m":"Air","n":46,"ot":46,"ea":3,"ex":43,"dl":0,"ds":-24,"fs":64213.31,"fc":43,"vs":299338.4,"is":563.88},{"c":"Swaziland","m":"Air","n":32,"ot":29,"ea":7,"ex":22,"dl":3,"ds":-164,"fs":169101.09,"fc":22,"vs":3507485.85,"is":5832.61},{"c":"Swaziland","m":"Ocean","n":2,"ot":2,"ea":0,"ex":2,"dl":0,"ds":0,"fs":25815.12,"fc":2,"vs":2009158.0,"is":3315.11},{"c":"Swaziland","m":"Truck","n":1,"ot":1,"ea":1,"ex":0,"dl":0,"ds":-11,"fs":4971.05,"fc":1,"vs":649350.0,"is":764.28},{"c":"Tanzania","m":"Air","n":306,"ot":291,"ea":33,"ex":258,"dl":15,"ds":-621,"fs":3701303.52,"fc":260,"vs":61853908.37,"is":95108.73},{"c":"Tanzania","m":"Ocean","n":6,"ot":6,"ea":0,"ex":6,"dl":0,"ds":0,"fs":111674.24,"fc":5,"vs":5900185.48,"is":9153.84},{"c":"Tanzania","m":"Truck","n":187,"ot":138,"ea":105,"ex":33,"dl":49,"ds":-1662,"fs":917084.58,"fc":135,"vs":57869090.66,"is":84789.58},{"c":"Tanzania","m":"Unknown","n":20,"ot":18,"ea":0,"ex":18,"dl":2,"ds":2,"fs":97926.98,"fc":12,"vs":3836311.14,"is":6138.11},{"c":"Togo","m":"Air","n":3,"ot":2,"ea":1,"ex":1,"dl":1,"ds":16,"fs":12544.72,"fc":2,"vs":153781.24,"is":181.0},{"c":"Uganda","m":"Air","n":534,"ot":479,"ea":135,"ex":344,"dl":55,"ds":-2558,"fs":3553978.47,"fc":409,"vs":50035473.44,"is":73064.04},{"c":"Uganda","m":"Ocean","n":8,"ot":8,"ea":0,"ex":8,"dl":0,"ds":0,"fs":82267.99,"fc":7,"vs":3211444.51,"is":4046.32},{"c":"Uganda","m":"Truck","n":229,"ot":186,"ea":162,"ex":24,"dl":43,"ds":-3348,"fs":1841359.45,"fc":142,"vs":42857395.43,"is":61177.39},{"c":"Uganda","m":"Unknown","n":8,"ot":8,"ea":0,"ex":8,"dl":0,"ds":0,"fs":6686.33,"fc":6,"vs":93022.78,"is":148.83},{"c":"Vietnam","m":"Air","n":687,"ot":681,"ea":15,"ex":666,"dl":6,"ds":-215,"fs":2735875.8,"fc":445,"vs":56933687.94,"is":79046.14},{"c":"Vietnam","m":"Truck","n":1,"ot":1,"ea":1,"ex":0,"dl":0,"ds":-26,"fs":1401.49,"fc":1,"vs":40717.92,"is":65.15},{"c":"Zambia","m":"Air","n":195,"ot":176,"ea":24,"ex":152,"dl":19,"ds":-230,"fs":2757825.26,"fc":170,"vs":40141320.95,"is":56771.11},{"c":"Zambia","m":"Ocean","n":3,"ot":3,"ea":2,"ex":1,"dl":0,"ds":-75,"fs":63940.06,"fc":3,"vs":949221.5,"is":1187.77},{"c":"Zambia","m":"Truck","n":386,"ot":297,"ea":179,"ex":118,"dl":89,"ds":-3214,"fs":2712772.79,"fc":263,"vs":181261841.21,"is":277955.59},{"c":"Zambia","m":"Unknown","n":99,"ot":99,"ea":1,"ex":98,"dl":0,"ds":-56,"fs":775899.1,"fc":81,"vs":24636456.75,"is":31733.21},{"c":"Zimbabwe","m":"Air","n":145,"ot":138,"ea":17,"ex":121,"dl":7,"ds":-282,"fs":1534030.08,"fc":98,"vs":14293089.34,"is":21107.91},{"c":"Zimbabwe","m":"Air Charter","n":18,"ot":18,"ea":1,"ex":17,"dl":0,"ds":-1,"fs":527163.62,"fc":17,"vs":2742165.67,"is":2818.92},{"c":"Zimbabwe","m":"Ocean","n":3,"ot":3,"ea":0,"ex":3,"dl":0,"ds":0,"fs":63459.07,"fc":3,"vs":1327196.4,"is":1492.15},{"c":"Zimbabwe","m":"Truck","n":360,"ot":290,"ea":209,"ex":81,"dl":70,"ds":-5639,"fs":2181588.0,"fc":191,"vs":85705845.09,"is":118150.51},{"c":"Zimbabwe","m":"Unknown","n":12,"ot":12,"ea":0,"ex":12,"dl":0,"ds":0,"fs":11760.09,"fc":10,"vs":371664.01,"is":116.3}];
 
-    const weeklyLabels = ["Wk 1", "Wk 2", "Wk 3", "Wk 4", "Wk 5", "Wk 6", "Wk 7", "Wk 8"];
-    const baseOtdTrend = [85.2, 86.0, 86.8, 85.9, 87.5, 88.4, 89.1, 89.8];
-    const baseRtoTrend = [15.8, 15.1, 14.6, 15.2, 13.9, 13.1, 12.6, 12.1];
+    const YEARLY = [{"y":2006,"m":"Air","n":63,"ot":63,"dl":0},{"y":2006,"m":"Unknown","n":2,"ot":2,"dl":0},{"y":2007,"m":"Air","n":391,"ot":378,"dl":13},{"y":2007,"m":"Truck","n":18,"ot":18,"dl":0},{"y":2007,"m":"Unknown","n":263,"ot":262,"dl":1},{"y":2008,"m":"Air","n":746,"ot":738,"dl":8},{"y":2008,"m":"Truck","n":188,"ot":186,"dl":2},{"y":2008,"m":"Unknown","n":95,"ot":92,"dl":3},{"y":2009,"m":"Air","n":845,"ot":823,"dl":22},{"y":2009,"m":"Air Charter","n":127,"ot":113,"dl":14},{"y":2009,"m":"Ocean","n":3,"ot":3,"dl":0},{"y":2009,"m":"Truck","n":278,"ot":269,"dl":9},{"y":2010,"m":"Air","n":875,"ot":736,"dl":139},{"y":2010,"m":"Air Charter","n":128,"ot":112,"dl":16},{"y":2010,"m":"Ocean","n":25,"ot":16,"dl":9},{"y":2010,"m":"Truck","n":176,"ot":149,"dl":27},{"y":2011,"m":"Air","n":537,"ot":460,"dl":77},{"y":2011,"m":"Air Charter","n":69,"ot":46,"dl":23},{"y":2011,"m":"Ocean","n":201,"ot":150,"dl":51},{"y":2011,"m":"Truck","n":204,"ot":117,"dl":87},{"y":2012,"m":"Air","n":764,"ot":702,"dl":62},{"y":2012,"m":"Air Charter","n":98,"ot":97,"dl":1},{"y":2012,"m":"Ocean","n":47,"ot":42,"dl":5},{"y":2012,"m":"Truck","n":364,"ot":331,"dl":33},{"y":2013,"m":"Air","n":757,"ot":629,"dl":128},{"y":2013,"m":"Air Charter","n":92,"ot":81,"dl":11},{"y":2013,"m":"Ocean","n":31,"ot":31,"dl":0},{"y":2013,"m":"Truck","n":392,"ot":303,"dl":89},{"y":2014,"m":"Air","n":670,"ot":584,"dl":86},{"y":2014,"m":"Air Charter","n":74,"ot":69,"dl":5},{"y":2014,"m":"Ocean","n":35,"ot":35,"dl":0},{"y":2014,"m":"Truck","n":749,"ot":604,"dl":145},{"y":2015,"m":"Air","n":465,"ot":413,"dl":52},{"y":2015,"m":"Air Charter","n":62,"ot":57,"dl":5},{"y":2015,"m":"Ocean","n":29,"ot":29,"dl":0},{"y":2015,"m":"Truck","n":461,"ot":398,"dl":63}];
+
+    const YEARS = [2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015];
+    const MODES = ["Air", "Truck", "Air Charter", "Ocean", "Unknown"];
 
     Chart.defaults.color = "#94a3b8";
     Chart.defaults.borderColor = "rgba(31, 41, 61, 0.7)";
 
-    // Initialize Charts
     const trendChart = new Chart(document.getElementById("trendChart"), {
       type: "line",
       data: {
-        labels: weeklyLabels,
+        labels: YEARS,
         datasets: [
           {
             label: "On-Time Delivery (%)",
-            data: [...baseOtdTrend],
+            data: [],
             borderColor: "#38bdf8",
             backgroundColor: "rgba(56, 189, 248, 0.12)",
-            tension: 0.35,
+            tension: 0.3,
             fill: true,
-            pointRadius: 3
+            pointRadius: 3.5
           },
           {
-            label: "RTO Rate (%)",
-            data: [...baseRtoTrend],
+            label: "Late Delivery (%)",
+            data: [],
             borderColor: "#f87171",
             backgroundColor: "rgba(248, 113, 113, 0.08)",
-            tension: 0.35,
+            tension: 0.3,
             fill: false,
-            pointRadius: 3
+            pointRadius: 3.5
           }
         ]
       },
@@ -439,10 +443,10 @@
     const outcomeChart = new Chart(document.getElementById("outcomeChart"), {
       type: "doughnut",
       data: {
-        labels: ["Delivered On-Time", "Delayed Delivery", "RTO (Returned)"],
+        labels: ["Exact On-Time (0d)", "Delivered Early (<0d)", "Delayed (>0d)"],
         datasets: [{
-          data: [78, 9, 13],
-          backgroundColor: ["#34d399", "#fbbf24", "#f87171"],
+          data: [0, 0, 0],
+          backgroundColor: ["#38bdf8", "#34d399", "#f87171"],
           borderWidth: 0,
           hoverOffset: 6
         }]
@@ -450,23 +454,23 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        cutout: "68%",
+        cutout: "66%",
         plugins: {
           legend: { position: "bottom", labels: { boxWidth: 12, padding: 14 } }
         }
       }
     });
 
-    const courierChart = new Chart(document.getElementById("courierChart"), {
+    const modeChart = new Chart(document.getElementById("modeChart"), {
       type: "bar",
       data: {
-        labels: ["BlueDart", "Delhivery", "Xpressbees", "Shadowfax"],
+        labels: MODES,
         datasets: [{
-          label: "Avg Transit (Days)",
-          data: [1.95, 2.85, 3.65, 5.0],
-          backgroundColor: ["#38bdf8", "#818cf8", "#fbbf24", "#f87171"],
+          label: "Avg Freight Cost (USD)",
+          data: [],
+          backgroundColor: ["#38bdf8", "#818cf8", "#f472b6", "#fbbf24", "#64748b"],
           borderRadius: 6,
-          barThickness: 26
+          barThickness: 24
         }]
       },
       options: {
@@ -475,668 +479,165 @@
         maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-          x: { beginAtZero: true, max: 6, title: { display: true, text: "Days" } },
-          y: { grid: { display: false } }
-        }
-      }
-    });
-
-    function updateDashboard() {
-      const selectedZone = document.getElementById("zoneFilter").value;
-      const selectedCourier = document.getElementById("courierFilter").value;
-
-      const filtered = lanesData.filter(row => {
-        const zoneOk = selectedZone === "ALL" || row.zone === selectedZone;
-        const courierOk = selectedCourier === "ALL" || row.courier === selectedCourier;
-        return zoneOk && courierOk;
-      });
-
-      const tbody = document.getElementById("laneTableBody");
-      tbody.innerHTML = "";
-
-      if (filtered.length === 0) {
-        document.getElementById("kpiShipments").textContent = "0";
-        document.getElementById("kpiOtd").textContent = "—";
-        document.getElementById("kpiRto").textContent = "—";
-        document.getElementById("kpiTransit").textContent = "—";
-        tbody.innerHTML = `<tr><td colspan="6" style="color:#94a3b8;text-align:center;padding:20px;">No lanes match this exact filter combination. Click Reset Filters.</td></tr>`;
-        return;
-      }
-
-      // Weighted aggregations
-      const totalShipments = filtered.reduce((acc, r) => acc + r.shipments, 0);
-      const weightedOtd = filtered.reduce((acc, r) => acc + r.otd * r.shipments, 0) / totalShipments;
-      const weightedRto = filtered.reduce((acc, r) => acc + r.rto * r.shipments, 0) / totalShipments;
-      const weightedTransit = filtered.reduce((acc, r) => acc + r.transit * r.shipments, 0) / totalShipments;
-
-      document.getElementById("kpiShipments").textContent = totalShipments.toLocaleString("en-IN");
-      document.getElementById("kpiOtd").textContent = weightedOtd.toFixed(1) + "%";
-      document.getElementById("kpiRto").textContent = weightedRto.toFixed(1) + "%";
-      document.getElementById("kpiTransit").textContent = weightedTransit.toFixed(1) + " days";
-
-      // Delta styling
-      const otdDeltaEl = document.getElementById("kpiOtdDelta");
-      otdDeltaEl.className = "kpi-delta " + (weightedOtd >= 90 ? "pos" : weightedOtd >= 84 ? "warn" : "neg");
-      otdDeltaEl.textContent = weightedOtd >= 90 ? "Above 90.0% SLA target" : `${(90 - weightedOtd).toFixed(1)}% below SLA target`;
-
-      const rtoDeltaEl = document.getElementById("kpiRtoDelta");
-      rtoDeltaEl.className = "kpi-delta " + (weightedRto <= 10 ? "pos" : weightedRto <= 15 ? "warn" : "neg");
-      rtoDeltaEl.textContent = weightedRto <= 10 ? "Healthy RTO threshold" : "High COD return leakage";
-
-      const transitDeltaEl = document.getElementById("kpiTransitDelta");
-      transitDeltaEl.className = "kpi-delta " + (weightedTransit <= 2.5 ? "pos" : weightedTransit <= 3.8 ? "warn" : "neg");
-      transitDeltaEl.textContent = weightedTransit <= 2.5 ? "Fast metro turnaround" : "Last-mile delay risk";
-
-      // Update Trend Chart dynamically based on filtered baseline
-      const otdShift = weightedOtd - 87.6;
-      const rtoShift = weightedRto - 13.4;
-      trendChart.data.datasets[0].data = baseOtdTrend.map(v => Math.min(99, Math.max(50, +(v + otdShift).toFixed(1))));
-      trendChart.data.datasets[1].data = baseRtoTrend.map(v => Math.min(45, Math.max(2, +(v + rtoShift).toFixed(1))));
-      trendChart.update();
-
-      // Update Doughnut Split
-      const deliveredOnTime = Math.max(0, +(100 - weightedRto - (100 - weightedOtd) * 0.55).toFixed(1));
-      const rtoPct = +weightedRto.toFixed(1);
-      const delayedPct = Math.max(0, +(100 - deliveredOnTime - rtoPct).toFixed(1));
-      outcomeChart.data.datasets[0].data = [deliveredOnTime, delayedPct, rtoPct];
-      outcomeChart.update();
-
-      // Sort lanes by highest RTO first
-      const sorted = [...filtered].sort((a, b) => b.rto - a.rto);
-      sorted.forEach(row => {
-        const pillClass = row.rto >= 17 ? "pill-bad" : row.rto >= 11 ? "pill-warn" : "pill-good";
-        const statusText = row.rto >= 17 ? "Action Needed" : row.rto >= 11 ? "Monitor" : "Optimal";
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td><strong>${row.lane}</strong></td>
-          <td>${row.courier}</td>
-          <td>${row.shipments.toLocaleString("en-IN")}</td>
-          <td>${row.transit.toFixed(1)}d</td>
-          <td>${row.rto.toFixed(1)}%</td>
-          <td><span class="status-pill ${pillClass}">${statusText}</span></td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    document.getElementById("zoneFilter").addEventListener("change", updateDashboard);
-    document.getElementById("courierFilter").addEventListener("change", updateDashboard);
-    document.getElementById("resetBtn").addEventListener("click", () => {
-      document.getElementById("zoneFilter").value = "ALL";
-      document.getElementById("courierFilter").value = "ALL";
-      updateDashboard();
-    });
-
-    updateDashboard();
-  </script>
-</body>
-  </html>
-  <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LogiLens | Supply Chain & RTO Performance Dashboard</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    :root {
-      --bg-primary: #0b0f17;
-      --bg-card: #131926;
-      --bg-card-hover: #182030;
-      --border: #1f293d;
-      --text-main: #f1f5f9;
-      --text-muted: #94a3b8;
-      --accent: #38bdf8;
-      --accent-soft: rgba(56, 189, 248, 0.12);
-      --success: #34d399;
-      --warning: #fbbf24;
-      --danger: #f87171;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
-    }
-
-    body {
-      background-color: var(--bg-primary);
-      color: var(--text-main);
-      padding: 24px;
-      line-height: 1.5;
-    }
-
-    .container {
-      max-width: 1280px;
-      margin: 0 auto;
-    }
-
-    /* Header & Controls */
-    header {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 24px;
-    }
-
-    .brand h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .badge {
-      font-size: 0.72rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      background: var(--accent-soft);
-      color: var(--accent);
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(56, 189, 248, 0.25);
-    }
-
-    .brand p {
-      color: var(--text-muted);
-      font-size: 0.88rem;
-      margin-top: 4px;
-    }
-
-    .filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-    }
-
-    select, button {
-      background: var(--bg-card);
-      color: var(--text-main);
-      border: 1px solid var(--border);
-      padding: 9px 14px;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      cursor: pointer;
-      outline: none;
-      transition: border-color 0.2s, background 0.2s;
-    }
-
-    select:hover, button:hover {
-      border-color: var(--accent);
-      background: var(--bg-card-hover);
-    }
-
-    button.reset-btn {
-      color: var(--accent);
-      font-weight: 500;
-    }
-
-    /* KPI Grid */
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .kpi-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 18px 20px;
-    }
-
-    .kpi-label {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .kpi-value {
-      font-size: 1.85rem;
-      font-weight: 700;
-      margin: 8px 0 4px;
-      letter-spacing: -0.02em;
-    }
-
-    .kpi-delta {
-      font-size: 0.8rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .pos { color: var(--success); }
-    .neg { color: var(--danger); }
-    .warn { color: var(--warning); }
-
-    /* Charts Layout */
-    .charts-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    @media (max-width: 900px) {
-      .charts-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .panel {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-    }
-
-    .panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 16px;
-    }
-
-    .panel-title {
-      font-size: 1rem;
-      font-weight: 600;
-    }
-
-    .panel-sub {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-    }
-
-    .chart-wrap {
-      position: relative;
-      height: 270px;
-      width: 100%;
-    }
-
-    /* Bottom Grid */
-    .bottom-grid {
-      display: grid;
-      grid-template-columns: 1.2fr 1.8fr;
-      gap: 16px;
-    }
-
-    @media (max-width: 900px) {
-      .bottom-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.85rem;
-    }
-
-    th {
-      text-align: left;
-      color: var(--text-muted);
-      font-weight: 500;
-      padding: 10px 8px;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.76rem;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    td {
-      padding: 12px 8px;
-      border-bottom: 1px solid rgba(31, 41, 61, 0.6);
-    }
-
-    tr:last-child td {
-      border-bottom: none;
-    }
-
-    .status-pill {
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-
-    .pill-good { background: rgba(52, 211, 153, 0.14); color: var(--success); }
-    .pill-warn { background: rgba(251, 191, 36, 0.14); color: var(--warning); }
-    .pill-bad  { background: rgba(248, 113, 113, 0.14); color: var(--danger); }
-
-    footer {
-      margin-top: 28px;
-      padding-top: 16px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 12px;
-      font-size: 0.82rem;
-      color: var(--text-muted);
-    }
-
-    footer a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-
-    footer a:hover {
-      text-decoration: underline;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <header>
-      <div class="brand">
-        <h1>LogiLens <span class="badge">Live Interactive Demo</span></h1>
-        <p>Supply Chain SLA, Courier Benchmarking & RTO Margin Leakage Analytics</p>
-      </div>
-      <div class="filters">
-        <select id="zoneFilter" aria-label="Filter by Zone">
-          <option value="ALL">All Zones (Pan-India)</option>
-          <option value="West">West Zone (Mumbai / Pune / GJ)</option>
-          <option value="North">North Zone (Delhi NCR / UP)</option>
-          <option value="South">South Zone (BLR / HYD / CHN)</option>
-          <option value="East">East & NE Zone (CCU / GHY)</option>
-        </select>
-        <select id="courierFilter" aria-label="Filter by Courier">
-          <option value="ALL">All Courier Partners</option>
-          <option value="Delhivery">Delhivery Surface</option>
-          <option value="BlueDart">BlueDart Air</option>
-          <option value="Xpressbees">Xpressbees</option>
-          <option value="Shadowfax">Shadowfax</option>
-        </select>
-        <button class="reset-btn" id="resetBtn">Reset Filters</button>
-      </div>
-    </header>
-
-    <!-- KPI Cards -->
-    <section class="kpi-grid">
-      <div class="kpi-card">
-        <div class="kpi-label">Total Shipments</div>
-        <div class="kpi-value" id="kpiShipments">—</div>
-        <div class="kpi-delta pos" id="kpiShipDelta">+11.4% vs prior 30d</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">On-Time Delivery (SLA)</div>
-        <div class="kpi-value" id="kpiOtd">—</div>
-        <div class="kpi-delta" id="kpiOtdDelta">Target benchmark: 90.0%</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">RTO Return Rate</div>
-        <div class="kpi-value" id="kpiRto">—</div>
-        <div class="kpi-delta" id="kpiRtoDelta">COD share drives 74% of RTO</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Avg. Transit Time</div>
-        <div class="kpi-value" id="kpiTransit">—</div>
-        <div class="kpi-delta" id="kpiTransitDelta">Dispatch-to-doorstep</div>
-      </div>
-    </section>
-
-    <!-- Main Charts -->
-    <section class="charts-grid">
-      <div class="panel">
-        <div class="panel-header">
-          <span class="panel-title">Weekly Delivery SLA vs. RTO Trend</span>
-          <span class="panel-sub">Last 8 Weeks (%)</span>
-        </div>
-        <div class="chart-wrap">
-          <canvas id="trendChart"></canvas>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-header">
-          <span class="panel-title">Shipment Outcome Split</span>
-          <span class="panel-sub">Order Volume Breakdown</span>
-        </div>
-        <div class="chart-wrap">
-          <canvas id="outcomeChart"></canvas>
-        </div>
-      </div>
-    </section>
-
-    <!-- Bottom Section: Courier Comparison + Bottleneck Lanes -->
-    <section class="bottom-grid">
-      <div class="panel">
-        <div class="panel-header">
-          <span class="panel-title">Avg. Transit Days by Courier</span>
-          <span class="panel-sub">Lower is faster</span>
-        </div>
-        <div class="chart-wrap">
-          <canvas id="courierChart"></canvas>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-header">
-          <span class="panel-title">High-Risk Fulfillment Lanes (Bottleneck Watchlist)</span>
-          <span class="panel-sub">Sorted by RTO & SLA impact</span>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Lane / Zone</th>
-              <th>Courier</th>
-              <th>Shipments</th>
-              <th>Avg Days</th>
-              <th>RTO %</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="laneTableBody"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <footer>
-      <div>Built by <strong>Runal Bhosale</strong> • Data & BI Consulting (Python • SQL • Power BI • Web Dashboards)</div>
-      <div>
-        <a href="https://github.com/Runal21/logilens-supply-chain-analytics" target="_blank" rel="noopener">GitHub Repo</a> • 
-        <a href="https://www.linkedin.com/in/runal-bhosale" target="_blank" rel="noopener">LinkedIn</a> • 
-        <a href="mailto:rubhosale21@gmail.com">Hire for Async BI Setup</a>
-      </div>
-    </footer>
-  </div>
-
-  <script>
-    // Structured sample dataset representing cleaned SQL/Python output
-    const lanesData = [
-      { zone: "West",  lane: "Mumbai → Pune / Nashik",   courier: "BlueDart",   shipments: 4280, otd: 94.8, rto: 6.4,  transit: 1.8 },
-      { zone: "West",  lane: "Mumbai → Ahmedabad / Surat",courier: "Delhivery",  shipments: 3610, otd: 91.2, rto: 8.9,  transit: 2.3 },
-      { zone: "South", lane: "Mumbai → Bengaluru",       courier: "BlueDart",   shipments: 3940, otd: 93.1, rto: 7.5,  transit: 2.1 },
-      { zone: "South", lane: "Mumbai → Chennai / Hyd",   courier: "Xpressbees", shipments: 2890, otd: 87.4, rto: 11.8, transit: 3.1 },
-      { zone: "North", lane: "Mumbai → Delhi NCR",       courier: "Delhivery",  shipments: 4520, otd: 86.2, rto: 14.6, transit: 3.4 },
-      { zone: "North", lane: "Mumbai → Lucknow / Kanpur",courier: "Shadowfax",  shipments: 2140, otd: 78.5, rto: 21.4, transit: 4.6 },
-      { zone: "East",  lane: "Mumbai → Kolkata",         courier: "Xpressbees", shipments: 1980, otd: 81.9, rto: 17.9, transit: 4.2 },
-      { zone: "East",  lane: "Mumbai → Guwahati / Patna",courier: "Shadowfax",  shipments: 1320, otd: 73.4, rto: 24.8, transit: 5.4 }
-    ];
-
-    const weeklyLabels = ["Wk 1", "Wk 2", "Wk 3", "Wk 4", "Wk 5", "Wk 6", "Wk 7", "Wk 8"];
-    const baseOtdTrend = [85.2, 86.0, 86.8, 85.9, 87.5, 88.4, 89.1, 89.8];
-    const baseRtoTrend = [15.8, 15.1, 14.6, 15.2, 13.9, 13.1, 12.6, 12.1];
-
-    Chart.defaults.color = "#94a3b8";
-    Chart.defaults.borderColor = "rgba(31, 41, 61, 0.7)";
-
-    // Initialize Charts
-    const trendChart = new Chart(document.getElementById("trendChart"), {
-      type: "line",
-      data: {
-        labels: weeklyLabels,
-        datasets: [
-          {
-            label: "On-Time Delivery (%)",
-            data: [...baseOtdTrend],
-            borderColor: "#38bdf8",
-            backgroundColor: "rgba(56, 189, 248, 0.12)",
-            tension: 0.35,
-            fill: true,
-            pointRadius: 3
+          x: {
+            beginAtZero: true,
+            ticks: { callback: v => "$" + (v >= 1000 ? (v / 1000).toFixed(0) + "k" : v) }
           },
-          {
-            label: "RTO Rate (%)",
-            data: [...baseRtoTrend],
-            borderColor: "#f87171",
-            backgroundColor: "rgba(248, 113, 113, 0.08)",
-            tension: 0.35,
-            fill: false,
-            pointRadius: 3
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { position: "top", align: "end" } },
-        scales: {
-          y: { min: 0, max: 100, ticks: { callback: v => v + "%" } },
-          x: { grid: { display: false } }
-        }
-      }
-    });
-
-    const outcomeChart = new Chart(document.getElementById("outcomeChart"), {
-      type: "doughnut",
-      data: {
-        labels: ["Delivered On-Time", "Delayed Delivery", "RTO (Returned)"],
-        datasets: [{
-          data: [78, 9, 13],
-          backgroundColor: ["#34d399", "#fbbf24", "#f87171"],
-          borderWidth: 0,
-          hoverOffset: 6
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: "68%",
-        plugins: {
-          legend: { position: "bottom", labels: { boxWidth: 12, padding: 14 } }
-        }
-      }
-    });
-
-    const courierChart = new Chart(document.getElementById("courierChart"), {
-      type: "bar",
-      data: {
-        labels: ["BlueDart", "Delhivery", "Xpressbees", "Shadowfax"],
-        datasets: [{
-          label: "Avg Transit (Days)",
-          data: [1.95, 2.85, 3.65, 5.0],
-          backgroundColor: ["#38bdf8", "#818cf8", "#fbbf24", "#f87171"],
-          borderRadius: 6,
-          barThickness: 26
-        }]
-      },
-      options: {
-        indexAxis: "y",
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { beginAtZero: true, max: 6, title: { display: true, text: "Days" } },
           y: { grid: { display: false } }
         }
       }
     });
 
-    function updateDashboard() {
-      const selectedZone = document.getElementById("zoneFilter").value;
-      const selectedCourier = document.getElementById("courierFilter").value;
+    function formatCompactUSD(val) {
+      if (val >= 1e9) return "$" + (val / 1e9).toFixed(2) + "B";
+      if (val >= 1e6) return "$" + (val / 1e6).toFixed(1) + "M";
+      if (val >= 1e3) return "$" + (val / 1e3).toFixed(1) + "K";
+      return "$" + val.toFixed(0);
+    }
 
-      const filtered = lanesData.filter(row => {
-        const zoneOk = selectedZone === "ALL" || row.zone === selectedZone;
-        const courierOk = selectedCourier === "ALL" || row.courier === selectedCourier;
-        return zoneOk && courierOk;
+    function updateDashboard() {
+      const selCountry = document.getElementById("countryFilter").value;
+      const selMode = document.getElementById("modeFilter").value;
+
+      const filtered = RECORDS.filter(r => {
+        const cOk = selCountry === "ALL" || r.c === selCountry;
+        const mOk = selMode === "ALL" || r.m === selMode;
+        return cOk && mOk;
       });
 
-      const tbody = document.getElementById("laneTableBody");
+      const tbody = document.getElementById("countryTableBody");
       tbody.innerHTML = "";
 
       if (filtered.length === 0) {
         document.getElementById("kpiShipments").textContent = "0";
         document.getElementById("kpiOtd").textContent = "—";
-        document.getElementById("kpiRto").textContent = "—";
-        document.getElementById("kpiTransit").textContent = "—";
-        tbody.innerHTML = `<tr><td colspan="6" style="color:#94a3b8;text-align:center;padding:20px;">No lanes match this exact filter combination. Click Reset Filters.</td></tr>`;
+        document.getElementById("kpiLate").textContent = "—";
+        document.getElementById("kpiDelay").textContent = "—";
+        document.getElementById("kpiValue").textContent = "$0";
+        document.getElementById("kpiFreightSub").textContent = "No matching records";
+        tbody.innerHTML = `<tr><td colspan="7" style="color:#94a3b8;text-align:center;padding:20px;">No shipments match this Country + Mode combination. Click Reset Filters.</td></tr>`;
         return;
       }
 
-      // Weighted aggregations
-      const totalShipments = filtered.reduce((acc, r) => acc + r.shipments, 0);
-      const weightedOtd = filtered.reduce((acc, r) => acc + r.otd * r.shipments, 0) / totalShipments;
-      const weightedRto = filtered.reduce((acc, r) => acc + r.rto * r.shipments, 0) / totalShipments;
-      const weightedTransit = filtered.reduce((acc, r) => acc + r.transit * r.shipments, 0) / totalShipments;
+      const totN = filtered.reduce((s, r) => s + r.n, 0);
+      const totOt = filtered.reduce((s, r) => s + r.ot, 0);
+      const totEa = filtered.reduce((s, r) => s + r.ea, 0);
+      const totEx = filtered.reduce((s, r) => s + r.ex, 0);
+      const totDl = filtered.reduce((s, r) => s + r.dl, 0);
+      const totDs = filtered.reduce((s, r) => s + r.ds, 0);
+      const totFs = filtered.reduce((s, r) => s + r.fs, 0);
+      const totFc = filtered.reduce((s, r) => s + r.fc, 0);
+      const totVs = filtered.reduce((s, r) => s + r.vs, 0);
 
-      document.getElementById("kpiShipments").textContent = totalShipments.toLocaleString("en-IN");
-      document.getElementById("kpiOtd").textContent = weightedOtd.toFixed(1) + "%";
-      document.getElementById("kpiRto").textContent = weightedRto.toFixed(1) + "%";
-      document.getElementById("kpiTransit").textContent = weightedTransit.toFixed(1) + " days";
+    const otdPct = (totOt / totN) * 100;
+      const latePct = (totDl / totN) * 100;
+      const avgVar = totDs / totN;
+      const avgFreight = totFc > 0 ? totFs / totFc : 0;
 
-      // Delta styling
-      const otdDeltaEl = document.getElementById("kpiOtdDelta");
-      otdDeltaEl.className = "kpi-delta " + (weightedOtd >= 90 ? "pos" : weightedOtd >= 84 ? "warn" : "neg");
-      otdDeltaEl.textContent = weightedOtd >= 90 ? "Above 90.0% SLA target" : `${(90 - weightedOtd).toFixed(1)}% below SLA target`;
+      document.getElementById("kpiShipments").textContent = totN.toLocaleString("en-US");
+      document.getElementById("kpiShipSub").textContent = selCountry === "ALL"
+        ? "Across 43 destination countries"
+        : `Destination: ${selCountry}`;
 
-      const rtoDeltaEl = document.getElementById("kpiRtoDelta");
-      rtoDeltaEl.className = "kpi-delta " + (weightedRto <= 10 ? "pos" : weightedRto <= 15 ? "warn" : "neg");
-      rtoDeltaEl.textContent = weightedRto <= 10 ? "Healthy RTO threshold" : "High COD return leakage";
+      document.getElementById("kpiOtd").textContent = otdPct.toFixed(1) + "%";
+      const otdSub = document.getElementById("kpiOtdSub");
+      otdSub.className = "kpi-delta " + (otdPct >= 90 ? "pos" : otdPct >= 84 ? "warn" : "neg");
+      otdSub.textContent = `${totOt.toLocaleString("en-US")} of ${totN.toLocaleString("en-US")} on/before schedule`;
 
-      const transitDeltaEl = document.getElementById("kpiTransitDelta");
-      transitDeltaEl.className = "kpi-delta " + (weightedTransit <= 2.5 ? "pos" : weightedTransit <= 3.8 ? "warn" : "neg");
-      transitDeltaEl.textContent = weightedTransit <= 2.5 ? "Fast metro turnaround" : "Last-mile delay risk";
+      document.getElementById("kpiLate").textContent = latePct.toFixed(1) + "%";
+      const lateSub = document.getElementById("kpiLateSub");
+      lateSub.className = "kpi-delta " + (latePct <= 10 ? "pos" : latePct <= 16 ? "warn" : "neg");
+      lateSub.textContent = `${totDl.toLocaleString("en-US")} delayed shipments (>0d)`;
 
-      // Update Trend Chart dynamically based on filtered baseline
-      const otdShift = weightedOtd - 87.6;
-      const rtoShift = weightedRto - 13.4;
-      trendChart.data.datasets[0].data = baseOtdTrend.map(v => Math.min(99, Math.max(50, +(v + otdShift).toFixed(1))));
-      trendChart.data.datasets[1].data = baseRtoTrend.map(v => Math.min(45, Math.max(2, +(v + rtoShift).toFixed(1))));
-      trendChart.update();
+      document.getElementById("kpiDelay").textContent = (avgVar > 0 ? "+" : "") + avgVar.toFixed(2) + " d";
+      const delaySub = document.getElementById("kpiDelaySub");
+      delaySub.className = "kpi-delta " + (avgVar <= 0 ? "pos" : "neg");
+      delaySub.textContent = avgVar <= 0 ? "Net ahead of scheduled SLA" : "Net behind scheduled SLA";
 
-      // Update Doughnut Split
-      const deliveredOnTime = Math.max(0, +(100 - weightedRto - (100 - weightedOtd) * 0.55).toFixed(1));
-      const rtoPct = +weightedRto.toFixed(1);
-      const delayedPct = Math.max(0, +(100 - deliveredOnTime - rtoPct).toFixed(1));
-      outcomeChart.data.datasets[0].data = [deliveredOnTime, delayedPct, rtoPct];
+      document.getElementById("kpiValue").textContent = formatCompactUSD(totVs);
+      document.getElementById("kpiFreightSub").textContent = `Avg freight: $${avgFreight.toLocaleString("en-US", { maximumFractionDigits: 0 })} / shipment`;
+
+      // Update Doughnut
+      outcomeChart.data.datasets[0].data = [totEx, totEa, totDl];
       outcomeChart.update();
 
-      // Sort lanes by highest RTO first
-      const sorted = [...filtered].sort((a, b) => b.rto - a.rto);
-      sorted.forEach(row => {
-        const pillClass = row.rto >= 17 ? "pill-bad" : row.rto >= 11 ? "pill-warn" : "pill-good";
-        const statusText = row.rto >= 17 ? "Action Needed" : row.rto >= 11 ? "Monitor" : "Optimal";
+      // Update Yearly Trend (filtered by Shipment Mode)
+      document.getElementById("trendSubtitle").textContent = selMode === "ALL"
+        ? "All Shipment Modes (2006–2015)"
+        : `Mode: ${selMode} (2006–2015)`;
+
+      const yrOtdData = [];
+      const yrLateData = [];
+      YEARS.forEach(yr => {
+        const rows = YEARLY.filter(y => y.y === yr && (selMode === "ALL" || y.m === selMode));
+        const n = rows.reduce((s, r) => s + r.n, 0);
+        const ot = rows.reduce((s, r) => s + r.ot, 0);
+        const dl = rows.reduce((s, r) => s + r.dl, 0);
+        yrOtdData.push(n > 0 ? +((ot / n) * 100).toFixed(1) : null);
+        yrLateData.push(n > 0 ? +((dl / n) * 100).toFixed(1) : null);
+      });
+      trendChart.data.datasets[0].data = yrOtdData;
+      trendChart.data.datasets[1].data = yrLateData;
+      trendChart.update();
+
+      // Update Mode Freight Bar Chart (filtered by Country)
+      const modeFreightData = MODES.map(m => {
+        const rows = RECORDS.filter(r => r.m === m && (selCountry === "ALL" || r.c === selCountry));
+        const fs = rows.reduce((s, r) => s + r.fs, 0);
+        const fc = rows.reduce((s, r) => s + r.fc, 0);
+        return fc > 0 ? +(fs / fc).toFixed(0) : 0;
+      });
+      modeChart.data.datasets[0].data = modeFreightData;
+      modeChart.update();
+
+      // Aggregate Country Watchlist (filtered by Mode)
+      const countryMap = {};
+      RECORDS.filter(r => (selMode === "ALL" || r.m === selMode) && (selCountry === "ALL" || r.c === selCountry))
+        .forEach(r => {
+          if (!countryMap[r.c]) {
+            countryMap[r.c] = { c: r.c, n: 0, ot: 0, dl: 0, ds: 0, fs: 0, fc: 0 };
+          }
+          countryMap[r.c].n += r.n;
+          countryMap[r.c].ot += r.ot;
+          countryMap[r.c].dl += r.dl;
+          countryMap[r.c].ds += r.ds;
+          countryMap[r.c].fs += r.fs;
+          countryMap[r.c].fc += r.fc;
+        });
+
+      const countryList = Object.values(countryMap)
+        .filter(x => selCountry !== "ALL" || x.n >= 50)
+        .sort((a, b) => (b.dl / b.n) - (a.dl / a.n))
+        .slice(0, 10);
+
+      countryList.forEach(row => {
+        const cOtd = (row.ot / row.n) * 100;
+        const cLate = (row.dl / row.n) * 100;
+        const cVar = row.ds / row.n;
+        const cFrt = row.fc > 0 ? row.fs / row.fc : 0;
+
+        const pillClass = cLate >= 18 ? "pill-bad" : cLate >= 12 ? "pill-warn" : "pill-good";
+        const pillText = cLate >= 18 ? "High Delay Risk" : cLate >= 12 ? "Monitor" : "Optimal";
+
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td><strong>${row.lane}</strong></td>
-          <td>${row.courier}</td>
-          <td>${row.shipments.toLocaleString("en-IN")}</td>
-          <td>${row.transit.toFixed(1)}d</td>
-          <td>${row.rto.toFixed(1)}%</td>
-          <td><span class="status-pill ${pillClass}">${statusText}</span></td>
+          <td><strong>${row.c}</strong></td>
+          <td>${row.n.toLocaleString("en-US")}</td>
+          <td>${cOtd.toFixed(1)}%</td>
+          <td>${cLate.toFixed(1)}%</td>
+          <td>${(cVar > 0 ? "+" : "") + cVar.toFixed(1)}d</td>
+          <td>$${cFrt.toLocaleString("en-US", { maximumFractionDigits: 0 })}</td>
+          <td><span class="status-pill ${pillClass}">${pillText}</span></td>
         `;
         tbody.appendChild(tr);
       });
     }
 
-    document.getElementById("zoneFilter").addEventListener("change", updateDashboard);
-    document.getElementById("courierFilter").addEventListener("change", updateDashboard);
+    document.getElementById("countryFilter").addEventListener("change", updateDashboard);
+    document.getElementById("modeFilter").addEventListener("change", updateDashboard);
     document.getElementById("resetBtn").addEventListener("click", () => {
-      document.getElementById("zoneFilter").value = "ALL";
-      document.getElementById("courierFilter").value = "ALL";
+      document.getElementById("countryFilter").value = "ALL";
+      document.getElementById("modeFilter").value = "ALL";
       updateDashboard();
     });
 
